@@ -46,31 +46,36 @@ namespace MeetupApis.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> PutParticipant(int id, Participant participant)
         {
-            if (id != participant.Id)
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+            if (id == participant.Id)
             {
-                return BadRequest();
-            }
-            try
-            {
-                var result = await _repository.UpdateParticipantAsync(id, participant);
-                if(result == null)
+                try
                 {
-                    return NotFound("Something went wrong, please contact your system administator");
+                    var result = await _repository.UpdateParticipantAsync(id, participant);
+                    if (result == null)
+                    {
+                        return NotFound("Something went wrong, please contact your system administator");
+                    }
                 }
-            }
-            catch (System.Exception ex)
-            {
-                return BadRequest(ex);
-            }
+                catch (System.Exception ex)
+                {
+                    return BadRequest(ex);
+                }
 
-            return NoContent();
+                return NoContent();
+            }
+            return BadRequest();
         }
 
         // POST: api/Participants
         [HttpPost]
         public async Task<ActionResult<Participant>> PostParticipant(Participant participant)
         {
-
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
             try
             {
                 await _repository.AddParticipantAsync(participant);

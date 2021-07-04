@@ -43,40 +43,47 @@ namespace MeetupApis.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> PutProfession(int id, Profession profession)
         {
-            if (id != profession.Id)
-            {
-                return BadRequest();
-            }
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
 
-            _context.Entry(profession).State = EntityState.Modified;
+            if (id == profession.Id)
+            {
+                _context.Entry(profession).State = EntityState.Modified;
 
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!ProfessionExists(id))
+                try
                 {
-                    return NotFound();
+                    await _context.SaveChangesAsync();
                 }
-                else
+                catch (DbUpdateConcurrencyException)
                 {
-                    throw;
+                    if (!ProfessionExists(id))
+                    {
+                        return NotFound();
+                    }
+                    else
+                    {
+                        throw;
+                    }
                 }
-            }
 
-            return NoContent();
+                return NoContent();
+            }
+            return BadRequest();
         }
 
         // POST: api/Professions
         [HttpPost]
         public async Task<ActionResult<Profession>> PostProfession(Profession profession)
         {
-            _context.Professions.Add(profession);
-            await _context.SaveChangesAsync();
+            if (ModelState.IsValid)
+            {
+                _context.Professions.Add(profession);
+                await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetProfession", new { id = profession.Id }, profession);
+                return CreatedAtAction("GetProfession", new { id = profession.Id }, profession);
+            }
+
+            return BadRequest(ModelState);
         }
 
         // DELETE: api/Professions/5

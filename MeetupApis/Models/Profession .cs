@@ -7,7 +7,9 @@ namespace MeetupApis.Models
     {
         [Key]
         public int Id { get; set; }
+
         [Column(TypeName = "nvarchar(100)")]
+        [Required(ErrorMessage = "Missing ProfessionType")]
         public string Type { get; set; }
     }
 }
