@@ -1,4 +1,5 @@
 ﻿using MeetupApis.Models;
+using MeetupApis.Repository;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -24,6 +25,7 @@ namespace MeetupApis
             services.AddMvc(options => options.EnableEndpointRouting = false);
 
             services.AddDbContext<APIDBContext>(options => options.UseSqlServer(Configuration["ConnectionStrings:DevConnection"]));
+            services.AddTransient<IParticipantRepository, ParticipantRepository>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
